@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8080" # Map localhost:8000 to the backend container's port 8080
+    volumes:
+      - ./backend:/app
+    command: ["node", "index.js"]
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:80" # Map localhost:3000 to Nginx port 80
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:8000
