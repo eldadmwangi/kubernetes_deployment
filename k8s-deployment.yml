@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: us-central1-docker.pkg.dev/optimal-waters-446108-c1/my-app/backend # image on artifact registry on my-app repository i created 
+        image: us-central1-docker.pkg.dev/optimal-waters-446108-c1/my-app/backend
         ports:
         - containerPort: 8000
         resources:
@@ -54,7 +54,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: us-central1-docker.pkg.dev/optimal-waters-446108-c1/my-app/frontend # image on artifact registry on my-app repository i created 
+        image: us-central1-docker.pkg.dev/optimal-waters-446108-c1/my-app/frontend 
         ports:
         - containerPort: 80
         env:
