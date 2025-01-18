@@ -59,7 +59,7 @@ spec:
         - containerPort: 80
         env:
         - name: REACT_APP_BACKEND_URL
-          value: "http://35.188.86.97:8000"
+          value: "http://34.45.71.156:8000"
         resources:
           requests:
             memory: "128Mi"

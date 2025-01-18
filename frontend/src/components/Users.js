@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 const Users = () => {
   const [users, setUsers] = useState([]);
   // const backendUrl = "http://localhost:8000/api/users";
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://35.188.86.97:8000/api/users";
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://34.45.71.156:8000/api/users";
 
   useEffect(() => {
     fetch(backendUrl)
