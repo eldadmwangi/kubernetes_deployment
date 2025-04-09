@@ -1,39 +1,58 @@
-var express = require('express');
-const cors = require('cors')
-var app = express();
+// src/index.js
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+
+const userRoutes = require('./src/routes/userRoutes');
+
+const app = express();
 app.use(cors());
 
-const users = [
-    {
-        id:1,
-        name:"Alice Johnson manuel",
-        phone:"555-1234",
-        email:"alice@example.com",
-        address:"123 Elm Street, Springfield"
-    },
-    {
-        id:2,
-        name:"Bob Smith marley",
-        phone:"555-5678",
-        email:"bob@example.com",
-        address:"456 Oak Avenue, Springfield"
-    },
-    {
-        id:3,
-        name:"Carol Williams Adams",
-        phone:"555-8765",
-        email:"carol@example.com",
-        address:"789 Pine Road, Springfield"
-    }
-];
+// Middleware
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/api/users', (req,res) => {
-    res.json(users);
-})
+// Verify routes are properly imported
+if (!userRoutes) throw new Error('User routes failed to import');
+
+// Health check route (before other routes)
+app.get('/health', async (req, res) => {
+    try {
+      const { rows } = await pool.query('SELECT 1+1 AS result');
+      res.json({
+        status: 'healthy',
+        database: 'connected',
+        result: rows[0].result, // Should be 2
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime()
+      });
+    } catch (err) {
+      res.status(503).json({ // 503 Service Unavailable
+        status: 'unhealthy',
+        database: 'disconnected',
+        error: err.message,
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
+// Routes
+app.use('/api/users', userRoutes);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ 
+    message: 'Something broke!', 
+    error: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
+});
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
 
 module.exports = app;
