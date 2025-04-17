@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
-  // const backendUrl = "http://localhost:8000/api/users";
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://34.45.71.156:8000/api/users";
+  console.log(users, "Users component rendered");
+  const backendUrl = "http://localhost:8000/api/users";
+  // const backendUrl = process.env.REACT_APP_BACKEND_URL || "http://34.45.71.156:8000/api/users";
 
   useEffect(() => {
     fetch(backendUrl)
@@ -27,17 +28,17 @@ const Users = () => {
             <th>Name</th>
             <th>Phone</th>
             <th>Email</th>
-            <th>Address</th>
+            <th>roles</th>
           </tr>
         </thead>
         <tbody>
           {users.map((user) => (
             <tr key={user.id}>
               <td>{user.id}</td>
-              <td>{user.name}</td>
+              <td>{user.username}</td>
               <td>{user.phone}</td>
               <td>{user.email}</td>
-              <td>{user.address}</td>
+              <td>{JSON.stringify(user.roles)}</td>
             </tr>
           ))}
         </tbody>
