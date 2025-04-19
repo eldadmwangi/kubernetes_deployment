@@ -1,0 +1,352 @@
+/* Main Container Styles */
+.glassContainer {
+  min-height: 100vh;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.95) 100%);
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Glass Card - Main Content Area */
+.glassCard {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 
+    0 8px 32px rgba(31, 38, 135, 0.25),
+    inset 0 4px 16px rgba(255, 255, 255, 0.1);
+  padding: 2.5rem;
+  width: 95%;
+  max-width: 1200px;
+  margin: 1.5rem 0;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+/* Mirror/Shimmer Effect */
+.glassCard::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    to bottom right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.08) 45%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(30deg);
+  pointer-events: none;
+  animation: shimmer 10s infinite linear;
+  z-index: 0;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(30deg); }
+  100% { transform: translateX(100%) rotate(30deg); }
+}
+
+/* Header Styles */
+.gradientText {
+  background: linear-gradient(90deg, #ffffff, #e0e0e0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.gradientText::after {
+  content: "";
+  position: absolute;
+  bottom: -12px;
+  left: 25%;
+  width: 50%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+}
+
+/* Form Styles */
+.glassForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.formGroup {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.8rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.formGroup input {
+  width: 100%;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+/* Error Messages */
+.error {
+  color: #ff6b6b;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Styles */
+.formActions {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  margin-top: 1.5rem;
+}
+
+button {
+  padding: 1rem 1.75rem;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+  z-index: -1;
+}
+
+button:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Table Styles */
+.userTableContainer {
+  overflow-x: auto;
+  position: relative;
+  z-index: 1;
+  margin-top: 2rem;
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+}
+
+.glassTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+}
+
+.glassTable th, 
+.glassTable td {
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.glassTable th {
+  background: rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.glassTable tr {
+  transition: all 0.2s ease;
+}
+
+.glassTable tr:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* Action Buttons in Table */
+.actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.iconBtn {
+  padding: 0.75rem;
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.iconBtn:hover {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.editIcon {
+  color: #64b5f6;
+}
+
+.deleteIcon {
+  color: #ff8a80;
+}
+
+/* Loading and Error States */
+.loadingSpinner {
+  color: white;
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.errorMessage {
+  color: #ff8a80;
+  text-align: center;
+  padding: 3rem;
+  font-size: 1.25rem;
+  background: rgba(255, 138, 128, 0.1);
+  border-radius: 12px;
+  margin: 2rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .glassContainer {
+    padding: 1rem;
+  }
+  
+  .glassCard {
+    padding: 1.5rem;
+    border-radius: 16px;
+  }
+  
+  .gradientText {
+    font-size: 2rem;
+  }
+  
+  .glassTable th, 
+  .glassTable td {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+  
+  .iconBtn {
+    width: 36px;
+    height: 36px;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .formGroup {
+    flex: 1 1 100%;
+  }
+  
+  .formActions {
+    flex-direction: column;
+  }
+  
+  button {
+    justify-content: center;
+  }
+  
+  .glassTable {
+    display: block;
+  }
+  
+  .glassTable thead {
+    display: none;
+  }
+  
+  .glassTable tr {
+    display: block;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .glassTable td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+  }
+  
+  .glassTable td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    margin-right: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+  
+  .actions {
+    justify-content: flex-end;
+  }
+}
