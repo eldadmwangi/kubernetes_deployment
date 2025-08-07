@@ -1,3 +1,86 @@
+# --- Persistent Volume Claim for PostgreSQL ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+# --- PostgreSQL Deployment with Persistent Volume ---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:15
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_DB
+        - name: PGDATA
+          value: /var/lib/postgresql/data/pgdata
+        ports:
+        - containerPort: 5432
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        volumeMounts:
+        - name: postgres-storage
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+
+---
+# --- PostgreSQL Service ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+spec:
+  selector:
+    app: postgres
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432
+  type: ClusterIP
+
+---
+# --- Backend Deployment ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,17 +97,40 @@ spec:
     spec:
       containers:
       - name: backend
-        image: us-central1-docker.pkg.dev/optimal-waters-446108-c1/my-app/backend
+        image: us-central1-docker.pkg.dev/theta-bindery-459807-f9/my-app/backend
         ports:
         - containerPort: 8000
+        env:
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_PASSWORD
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: postgres-secret
+              key: POSTGRES_DB
+        - name: DB_HOST
+          value: postgres-service
+        - name: DB_PORT
+          value: "5432"
+
         resources:
           requests:
             memory: "128Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
             memory: "256Mi"
-            cpu: "500m"
+            cpu: "250m"
+
 ---
+# --- Backend Service ---
 apiVersion: v1
 kind: Service
 metadata:
@@ -35,9 +141,11 @@ spec:
     app: backend
   ports:
   - protocol: TCP
-    port: 8000 # port exposed by the service
-    targetPort: 8000 # Port exposed by the backend container
+    port: 8000
+    targetPort: 8000
+
 ---
+# --- Frontend Deployment ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -54,20 +162,22 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: us-central1-docker.pkg.dev/optimal-waters-446108-c1/my-app/frontend 
+        image: us-central1-docker.pkg.dev/theta-bindery-459807-f9/my-app/frontend
         ports:
         - containerPort: 80
         env:
         - name: REACT_APP_BACKEND_URL
-          value: "http://35.188.86.97:8000"
+          value: "http://backend-service:8000"  # Or "http://backend-service:8000" for internal DNS or http://34.42.191.208:8000
         resources:
           requests:
             memory: "128Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
             memory: "256Mi"
-            cpu: "500m"
+            cpu: "250m"
+
 ---
+# --- Frontend Service ---
 apiVersion: v1
 kind: Service
 metadata:
@@ -80,4 +190,3 @@ spec:
   - protocol: TCP
     port: 80
     targetPort: 80
-

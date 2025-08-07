@@ -5,13 +5,28 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "migrate:create": "node-pg-migrate create --create-timestamp --migrations-dir=src/migrations",
+    "migrate:up": "node-pg-migrate up --migrations-dir=src/migrations",
+    "migrate:down": "node-pg-migrate down --migrations-dir=src/migrations",
+    "seed": "node src/seeddata/seed.js",
+    "reset-db": "npm run migrate:down && npm run migrate:up && npm run seed"
   },
   "author": "eldad",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "express": "^4.21.2",
-    "nodemon": "^3.1.9"
+    "node-pg-migrate": "^7.9.1",
+    "nodemon": "^3.1.9",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "chai": "^5.1.2",
+    "dotenv": "^16.5.0",
+    "mocha": "^11.1.0",
+    "supertest": "^7.0.0"
   }
 }
