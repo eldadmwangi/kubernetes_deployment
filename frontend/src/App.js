@@ -1,6 +1,6 @@
 
 import './App.css';
-import UsersContainer from "../src/container/UsersContainer";
+import UsersContainer from './container/UsersContainer'
 
 function App() {
   return (

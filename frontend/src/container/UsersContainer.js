@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Users from "../components/Users";
 
 const UsersContainer = () => {
@@ -8,9 +8,12 @@ const UsersContainer = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
-  const backendUrl = "http://localhost:8000/api/users";
+  //const backendUrl = "http://localhost:8000/api/users"; // if running locally
 
-  const fetchUsers = async () => {
+  const baseUrl = process.env.REACT_APP_BACKEND_URL || "http://34.42.191.208:8000";
+  const backendUrl = `${baseUrl}/api/users`;
+
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(backendUrl);
@@ -25,11 +28,11 @@ const UsersContainer = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [backendUrl]);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]); 
 
   const handleCreateUser = async (userData) => {
     try {

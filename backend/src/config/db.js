@@ -15,32 +15,37 @@ const dbConfig = {
 const pool = new Pool(dbConfig);
 
 // Immediate connection test with retry logic
-const testConnection = (attempt = 1) => {
-  const maxAttempts = 3;
-  const retryDelay = 2000; // 2 seconds between retries
+const testConnection = async (attempt = 1) => {
+  const maxAttempts = 10;
+  const retryDelay = 3000;
 
-  pool.query('SELECT NOW() as current_time, version() as db_version', (err, res) => {
-    if (err) {
-      console.error(`❌ Database connection failed (attempt ${attempt}/${maxAttempts})`, err.message);
-      
-      if (attempt < maxAttempts) {
-        setTimeout(() => testConnection(attempt + 1), retryDelay);
-      } else {
-        console.error('💥 Failed to connect to database after multiple attempts');
-        process.exit(1);
-      }
-    } else {
-      console.log('✅ Database connected successfully!');
-      console.log('📅 Current DB time:', res.rows[0].current_time);
-      console.log('ℹ️ PostgreSQL version:', res.rows[0].db_version.split('\n')[0]);
-      
-      // Log pool stats periodically
-      setInterval(async () => {
+  try {
+    const res = await pool.query('SELECT NOW() as current_time, version() as db_version');
+    console.log('✅ Database connected successfully!');
+    console.log('📅 Current DB time:', res.rows[0].current_time);
+    console.log('ℹ️ PostgreSQL version:', res.rows[0].db_version.split('\n')[0]);
+
+    // Log pool stats periodically
+    setInterval(async () => {
+      try {
         const stats = await pool.query('SELECT count(*) FROM pg_stat_activity WHERE usename = $1', [dbConfig.user]);
         console.log(`📊 Database stats: ${stats.rows[0].count} active connections`);
-      }, 30000);
+      } catch (e) {
+        console.error('⚠️ Error collecting DB stats:', e.message);
+      }
+    }, 30000);
+
+  } catch (err) {
+    console.error(`❌ Database connection failed (attempt ${attempt}/${maxAttempts}): ${err.message}`);
+
+    if (attempt < maxAttempts) {
+      console.log(`🔁 Retrying in ${retryDelay / 1000} seconds...`);
+      setTimeout(() => testConnection(attempt + 1), retryDelay);
+    } else {
+      console.error('💥 Failed to connect to database after multiple attempts');
+      process.exit(1);
     }
-  });
+  }
 };
 
 // Test connection on startup
@@ -74,22 +79,3 @@ module.exports = {
   },
   pool, // Export pool directly for special cases
 };
-
-
-
-// const { Pool } = require('pg');
-
-// const pool = new Pool({
-//   user: process.env.DB_USER,
-//   host: process.env.DB_HOST,
-//   database: process.env.DB_NAME,
-//   password: process.env.DB_PASSWORD,
-//   port: process.env.DB_PORT,
-  
-// })
-
-// module.exports = {
-//   query: (text, params) => pool.query(text, params),
-//   // getClient: () => pool.connect(),
-//   // end: () => pool.end(),
-// }

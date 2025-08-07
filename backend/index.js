@@ -5,6 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 
 const userRoutes = require('./src/routes/userRoutes');
+const pool = require('./src/config/db');
 
 const app = express();
 app.use(cors());
@@ -18,26 +19,26 @@ if (!userRoutes) throw new Error('User routes failed to import');
 
 // Health check route (before other routes)
 app.get('/health', async (req, res) => {
-    try {
-      const { rows } = await pool.query('SELECT 1+1 AS result');
-      res.json({
-        status: 'healthy',
-        database: 'connected',
-        result: rows[0].result, // Should be 2
-        timestamp: new Date().toISOString(),
-        uptime: process.uptime()
-      });
-    } catch (err) {
-      res.status(503).json({ // 503 Service Unavailable
-        status: 'unhealthy',
-        database: 'disconnected',
-        error: err.message,
-        timestamp: new Date().toISOString()
-      });
-    }
-  });
+  try {
+    const { rows } = await pool.query('SELECT 1+1 AS result');
+    res.json({
+      status: 'healthy',
+      database: 'connected',
+      result: rows[0].result, // Should be 2
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+    });
+  } catch (err) {
+    res.status(503).json({
+      status: 'unhealthy',
+      database: 'disconnected',
+      error: err.message,
+      timestamp: new Date().toISOString(),
+    });
+  }
+});
 
-// Routes
+// API routes
 app.use('/api/users', userRoutes);
 
 // Error handling middleware

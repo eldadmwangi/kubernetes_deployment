@@ -27,8 +27,8 @@ module.exports = {
     const { username, phone, email, password, created_at, updated_at } = userData;
     try {
       const { rows } = await db.query(
-        "INSERT INTO users (username, phone, email, password, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-        [username, phone, email, password, created_at, updated_at]
+        "INSERT INTO users (username, phone, email, password) VALUES ($1, $2, $3, $4 ) RETURNING *",
+        [username, phone, email, password ]
       );
       return rows[0];
     } catch (error) {

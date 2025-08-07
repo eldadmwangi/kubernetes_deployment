@@ -15,7 +15,7 @@ const Users = ({
     username: "",
     phone: "",
     email: "",
-    password: ""
+    password: "",
   });
 
   const handleInputChange = (e) => {
@@ -34,8 +34,8 @@ const Users = ({
     } else {
       onCreateUser({
         ...newUser,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        // created_at: new Date().toISOString(),
+        // updated_at: new Date().toISOString()
       });
       setNewUser({
         username: "",
@@ -54,7 +54,7 @@ const Users = ({
         onClick={() => setShowCreateForm(!showCreateForm)}
         style={{ marginBottom: "20px" }}
       >
-        {showCreateForm ? "Cancel" : "Create New User"}
+        {showCreateForm ? "Cancel" : "Create New User Here!!"}
       </button>
 
       {(showCreateForm || editingUser) && (
@@ -161,8 +161,8 @@ Users.propTypes = {
       phone: PropTypes.string,
       email: PropTypes.string,
       roles: PropTypes.string,
-      created_at: PropTypes.string,
-      updated_at: PropTypes.string
+      // created_at: PropTypes.string,
+      // updated_at: PropTypes.string
     })
   ).isRequired,
   onCreateUser: PropTypes.func.isRequired,
